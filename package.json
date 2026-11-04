@@ -1,0 +1,42 @@
+{
+  "name": "phaser-playable-kit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Open source kit for building playable ads for mobile games with Phaser 4, Vite and TypeScript.",
+  "license": "MIT",
+  "author": "Alvaro Millan Estevez",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlvaroMillanEstevez/phaser-playable-kit.git"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.2",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.14.0",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
+    "vitest": "5.0.3"
+  },
+  "overrides": {
+    "minimatch": "11.0.4"
+  }
+}
