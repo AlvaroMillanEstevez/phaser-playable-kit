@@ -110,3 +110,27 @@ export function findTripleMove(board: Board): { from: SlotRef; to: SlotRef } | n
   }
   return null;
 }
+
+/**
+ * A move that puts an item next to an equal one, on a shelf with room for the third.
+ */
+export function findPairMove(board: Board): { from: SlotRef; to: SlotRef } | null {
+  for (const [shelfIndex, shelf] of board.shelves.entries()) {
+    const items = shelf.filter((slot): slot is ItemType => slot !== null);
+    const [item] = items;
+    const [free] = freeSlots(board, shelfIndex);
+    if (items.length !== 1 || item === undefined || free === undefined) continue;
+    for (const [otherIndex, other] of board.shelves.entries()) {
+      const slot = other.indexOf(item);
+      if (otherIndex !== shelfIndex && slot !== -1) {
+        return { from: { shelf: otherIndex, slot }, to: { shelf: shelfIndex, slot: free } };
+      }
+    }
+  }
+  return null;
+}
+
+/** The move the tutorial hand shows: complete a triple if possible, else build a pair. */
+export function findHint(board: Board): { from: SlotRef; to: SlotRef } | null {
+  return findTripleMove(board) ?? findPairMove(board);
+}

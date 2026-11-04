@@ -101,6 +101,18 @@ describe('PlayableRuntime', () => {
     expect(sink.setMuted).toHaveBeenLastCalledWith(false);
   });
 
+  it('remembers an interaction that happened before audio was attached', () => {
+    const { adapter, lifecycle } = stubAdapter();
+    const target = new EventTarget();
+    const runtime = new PlayableRuntime({ adapter, interactionTarget: target });
+    lifecycle.setViewable(true);
+    target.dispatchEvent(new Event('pointerdown'));
+
+    const sink = { setMuted: vi.fn<(m: boolean) => void>() };
+    runtime.attachAudio(sink);
+    expect(sink.setMuted).toHaveBeenLastCalledWith(false);
+  });
+
   it('does not report pauses before gameplay has started', () => {
     const { adapter, lifecycle } = stubAdapter();
     const onPauseChange = vi.fn();

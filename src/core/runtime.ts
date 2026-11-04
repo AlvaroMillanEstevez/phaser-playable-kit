@@ -18,6 +18,7 @@ export interface RuntimeOptions {
 export class PlayableRuntime {
   readonly adapter: NetworkAdapter;
   private audio: AudioController | undefined;
+  private audioUnlocked = false;
   private started = false;
   private interacted = false;
   private ended = false;
@@ -27,7 +28,9 @@ export class PlayableRuntime {
   constructor(options: RuntimeOptions) {
     this.adapter = options.adapter;
     if (options.interactionTarget) {
-      onFirstInteraction(options.interactionTarget, () => this.audio?.unlock());
+      onFirstInteraction(options.interactionTarget, () => {
+        this.unlockAudio();
+      });
     }
   }
 
@@ -35,10 +38,12 @@ export class PlayableRuntime {
   attachAudio(sink: AudioSink): void {
     this.audio = new AudioController(sink);
     this.audio.setViewable(this.adapter.isViewable());
+    if (this.audioUnlocked) this.audio.unlock();
   }
 
   /** Unlocks audio by hand, for sinks that cannot rely on `interactionTarget`. */
   unlockAudio(): void {
+    this.audioUnlocked = true;
     this.audio?.unlock();
   }
 

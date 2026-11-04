@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   canMove,
   createBoard,
+  findHint,
   findTripleMove,
-  freeSlots,
   isEmpty,
   move,
   type Board,
@@ -99,7 +99,7 @@ describe('level', () => {
     let board: Board = createLevel();
     let moves = 0;
     while (!isEmpty(board) && moves < 12) {
-      const next = findTripleMove(board) ?? firstPairingMove(board);
+      const next = findHint(board);
       if (!next) break;
       const result = move(board, next.from, next.to);
       if (!result) break;
@@ -110,20 +110,3 @@ describe('level', () => {
     expect(moves).toBeLessThanOrEqual(12);
   });
 });
-
-/** Moves an item next to an equal one on a shelf that still has room for the third. */
-function firstPairingMove(board: Board): { from: SlotRef; to: SlotRef } | null {
-  for (const [s, shelf] of board.shelves.entries()) {
-    const items = shelf.filter((x) => x !== null);
-    const free = freeSlots(board, s);
-    if (items.length !== 1 || free.length < 1) continue;
-    const item = items[0];
-    for (const [o, other] of board.shelves.entries()) {
-      const slot = other.indexOf(item ?? null);
-      if (o !== s && slot !== -1 && free[0] !== undefined) {
-        return { from: ref(o, slot), to: ref(s, free[0]) };
-      }
-    }
-  }
-  return null;
-}
