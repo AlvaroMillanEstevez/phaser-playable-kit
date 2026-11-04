@@ -103,7 +103,10 @@ Notes:
 - **The `exitapi.js` script is the only external URL the kit allows in any build**,
   because Google requires it. The static validator allowlists this exact URL for the
   `google` network only.
-- The kit avoids `iframe` and `localStorage` for every network.
+- The kit avoids `iframe` and `localStorage` for every network. Phaser only reads
+  `!!localStorage.getItem` inside a `try` for feature detection; Google builds rename the
+  identifier (`PPK_DISABLED_localStorage`) so the file contains no local storage
+  reference at all. Other networks only get a validator warning.
 
 ## Meta (Facebook / Instagram)
 
@@ -141,8 +144,12 @@ Requirements:
 
 Notes:
 
-- Phaser's loader references `XMLHttpRequest`. See the validator output for the Moloco
-  build; removing it is tracked in the roadmap (custom Phaser build).
+- Phaser's loader references `XMLHttpRequest`, only on the path that loads non-inlined
+  URLs (inlined `data:` assets are decoded with `atob`). Moloco builds rename the
+  identifier to `PPK_DISABLED_XMLHttpRequest`, so the token is absent from the file and
+  any attempt to use it throws instead of making a request. The static validator fails
+  if the token is left, and the smoke test checks the build still plays. A custom Phaser
+  build without the loader is in the roadmap.
 
 ## Liftoff
 

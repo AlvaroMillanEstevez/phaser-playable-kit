@@ -9,6 +9,16 @@ import type { NetworkId } from '../adapter.ts';
 
 export type Orientation = 'portrait' | 'landscape' | 'portrait,landscape';
 
+/** How the ad talks to the container: MRAID, Google's ExitApi or Meta's FbPlayableAd. */
+export type NetworkFamily = 'mraid' | 'google' | 'fb';
+
+/** Tokens a build of each family must contain to reach the store through its API. */
+export const FAMILY_TOKENS: Record<NetworkFamily, readonly string[]> = {
+  mraid: ['mraid', 'isViewable', 'viewableChange'],
+  google: ['ExitApi', 'exit'],
+  fb: ['FbPlayableAd', 'onCTAClick'],
+};
+
 export interface NetworkSpec {
   readonly id: NetworkId;
   readonly name: string;
@@ -19,8 +29,13 @@ export interface NetworkSpec {
   readonly maxBytes: number;
   /** Maximum number of files inside the ZIP. */
   readonly maxFiles?: number;
-  /** Code the build must contain to reach the store through this network's API. */
-  readonly ctaSignature: string;
+  readonly family: NetworkFamily;
+  /**
+   * Identifiers the network forbids anywhere in the file. The build renames them (they
+   * only appear in unused or feature-detection code in Phaser) and the validator fails
+   * if any is left.
+   */
+  readonly forbiddenTokens?: readonly string[];
   /** Extra `<head>` markup required by the network, inserted before any script. */
   readonly head?: (context: { orientation: Orientation }) => string;
 }
@@ -38,7 +53,7 @@ export const NETWORKS = {
     status: 'supported',
     output: 'html',
     maxBytes: 5 * MB,
-    ctaSignature: '.open(',
+    family: 'mraid',
   },
   unity: {
     id: 'unity',
@@ -47,7 +62,7 @@ export const NETWORKS = {
     output: 'html',
     // Unity requires "less than 5 MB".
     maxBytes: 5 * MB - 1,
-    ctaSignature: '.open(',
+    family: 'mraid',
   },
   liftoff: {
     id: 'liftoff',
@@ -55,7 +70,7 @@ export const NETWORKS = {
     status: 'testing',
     output: 'html',
     maxBytes: 5 * MB,
-    ctaSignature: '.open(',
+    family: 'mraid',
   },
   google: {
     id: 'google',
@@ -64,7 +79,9 @@ export const NETWORKS = {
     output: 'zip',
     maxBytes: 5 * MB,
     maxFiles: 512,
-    ctaSignature: 'ExitApi',
+    family: 'google',
+    // "Local storage methods can't be used."
+    forbiddenTokens: ['localStorage'],
     head: ({ orientation }) =>
       `<meta name="ad.orientation" content="${orientation}">\n` +
       `<script type="text/javascript" src="${GOOGLE_EXIT_API_URL}"></script>`,
@@ -75,7 +92,7 @@ export const NETWORKS = {
     status: 'supported',
     output: 'html',
     maxBytes: 2 * MB,
-    ctaSignature: 'FbPlayableAd',
+    family: 'fb',
   },
   moloco: {
     id: 'moloco',
@@ -84,7 +101,9 @@ export const NETWORKS = {
     output: 'html',
     // Moloco requires "less than 5 MB".
     maxBytes: 5 * MB - 1,
-    ctaSignature: 'FbPlayableAd',
+    family: 'fb',
+    // "The standalone playable must not include the JavaScript object XMLHttpRequest."
+    forbiddenTokens: ['XMLHttpRequest'],
   },
 } as const satisfies Record<Exclude<NetworkId, 'preview'>, NetworkSpec>;
 

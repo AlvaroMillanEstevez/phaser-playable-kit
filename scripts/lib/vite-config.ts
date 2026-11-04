@@ -35,6 +35,30 @@ function networkHtml(network: NetworkId, orientation: Orientation): Plugin {
   };
 }
 
+/** Prefix of renamed forbidden identifiers; any use of them throws a ReferenceError. */
+export const DISABLED_PREFIX = 'PPK_DISABLED_';
+
+/**
+ * Renames identifiers a network forbids (for example Moloco forbids `XMLHttpRequest`).
+ * In Phaser they only appear in code the playables never run (loading non-inlined URLs)
+ * or in feature detection wrapped in try/catch, so renaming them is safe; the smoke test
+ * checks the result still plays.
+ */
+function stripForbiddenTokens(network: NetworkId): Plugin {
+  const tokens = isBuildNetwork(network) ? (getNetworkSpec(network).forbiddenTokens ?? []) : [];
+  return {
+    name: 'playable:strip-forbidden-tokens',
+    renderChunk(code) {
+      if (tokens.length === 0) return null;
+      let result = code;
+      for (const token of tokens) {
+        result = result.replace(new RegExp(`\\b${token}\\b`, 'g'), `${DISABLED_PREFIX}${token}`);
+      }
+      return { code: result, map: null };
+    },
+  };
+}
+
 /** Vite config for one playable and one network, shared by `vite dev` and the build. */
 export function playableViteConfig(options: PlayableBuildOptions): UserConfig {
   const { playable, network, orientation } = options;
@@ -48,7 +72,11 @@ export function playableViteConfig(options: PlayableBuildOptions): UserConfig {
         '@network': path.join(ROOT, 'src/core/networks', `${network}.ts`),
       },
     },
-    plugins: [networkHtml(network, orientation), viteSingleFile({ removeViteModuleLoader: true })],
+    plugins: [
+      networkHtml(network, orientation),
+      stripForbiddenTokens(network),
+      viteSingleFile({ removeViteModuleLoader: true }),
+    ],
     build: {
       outDir: options.outDir ?? path.join(ROOT, 'dist', playable, network),
       emptyOutDir: true,

@@ -120,7 +120,7 @@ async function smoke(
   });
   await page.goto(pathToFileURL(path.join(DIST_DIR, playable, network, 'index.html')).href);
 
-  const usesMraid = NETWORKS[network].ctaSignature === '.open(';
+  const usesMraid = NETWORKS[network].family === 'mraid';
   if (usesMraid) {
     await page.waitForTimeout((READY_AT_MS + VIEWABLE_AT_MS) / 2);
     if ((await page.locator('canvas').count()) > 0) problems.push('rendered before viewable');

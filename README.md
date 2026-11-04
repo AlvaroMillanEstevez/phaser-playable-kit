@@ -55,6 +55,8 @@ npm install
 npm run dev                  # hello-world in the browser, no ad network
 npm run build                # every playable for every network → dist/
 npm run size                 # fail if any build is over its network's limit
+npm run validate             # static checks: external URLs, fetch/XHR, iframes, CTA per network
+npm run test:e2e             # play every build in headless Chromium with a fake ad container
 npm run check                # typecheck, lint, format check and tests
 ```
 
