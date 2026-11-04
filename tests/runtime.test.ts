@@ -81,7 +81,8 @@ describe('PlayableRuntime', () => {
     const { adapter, lifecycle } = stubAdapter();
     const onPauseChange = vi.fn();
     const target = new EventTarget();
-    const runtime = new PlayableRuntime({ adapter, onPauseChange, interactionTarget: target });
+    const runtime = new PlayableRuntime({ adapter, interactionTarget: target });
+    runtime.onPauseChange(onPauseChange);
     const sink = { setMuted: vi.fn<(m: boolean) => void>() };
     runtime.attachAudio(sink);
 
@@ -103,7 +104,8 @@ describe('PlayableRuntime', () => {
   it('does not report pauses before gameplay has started', () => {
     const { adapter, lifecycle } = stubAdapter();
     const onPauseChange = vi.fn();
-    const runtime = new PlayableRuntime({ adapter, onPauseChange });
+    const runtime = new PlayableRuntime({ adapter });
+    runtime.onPauseChange(onPauseChange);
     runtime.start(() => undefined);
     lifecycle.setViewable(true);
     lifecycle.setViewable(false);

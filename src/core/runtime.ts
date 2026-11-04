@@ -13,8 +13,6 @@ export interface RuntimeOptions {
   readonly adapter: NetworkAdapter;
   /** Where to listen for the first interaction that unlocks audio. */
   readonly interactionTarget?: InteractionTarget;
-  /** Called with `true` when gameplay must pause (ad hidden) and `false` to resume. */
-  readonly onPauseChange?: (paused: boolean) => void;
 }
 
 export class PlayableRuntime {
@@ -24,11 +22,10 @@ export class PlayableRuntime {
   private interacted = false;
   private ended = false;
   private readonly listeners = new Map<PlayableEvent, Set<() => void>>();
-  private readonly onPauseChange: ((paused: boolean) => void) | undefined;
+  private readonly pauseListeners = new Set<(paused: boolean) => void>();
 
   constructor(options: RuntimeOptions) {
     this.adapter = options.adapter;
-    this.onPauseChange = options.onPauseChange;
     if (options.interactionTarget) {
       onFirstInteraction(options.interactionTarget, () => this.audio?.unlock());
     }
@@ -54,7 +51,8 @@ export class PlayableRuntime {
     this.adapter.init();
     this.adapter.onViewableChange((viewable) => {
       this.audio?.setViewable(viewable);
-      if (this.started) this.onPauseChange?.(!viewable);
+      if (!this.started) return;
+      for (const listener of this.pauseListeners) listener(!viewable);
     });
     this.adapter.onReady(() => {
       if (this.started) return;
@@ -63,6 +61,15 @@ export class PlayableRuntime {
       this.emit('start');
       onStart();
     });
+  }
+
+  /**
+   * Called with `true` when gameplay must pause (ad hidden) and `false` to resume.
+   * Only fires after gameplay has started.
+   */
+  onPauseChange(listener: (paused: boolean) => void): () => void {
+    this.pauseListeners.add(listener);
+    return () => this.pauseListeners.delete(listener);
   }
 
   /**

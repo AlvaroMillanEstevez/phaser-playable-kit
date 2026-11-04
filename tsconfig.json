@@ -16,7 +16,10 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "@network": ["./src/core/networks/preview.ts"]
+    }
   },
   "include": ["src", "playables", "scripts", "tests", "*.ts"]
 }

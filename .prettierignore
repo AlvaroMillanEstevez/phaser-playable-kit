@@ -1,3 +1,5 @@
 dist/
 coverage/
 package-lock.json
+# Google rejects self-closing tags in ad markup: keep playable HTML as written.
+playables/**/*.html
