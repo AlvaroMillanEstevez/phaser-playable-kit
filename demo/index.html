@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Live demo of phaser-playable-kit: playable ads built with Phaser 4 for AppLovin, Unity Ads, Google, Meta, Moloco and Liftoff, with a simulated ad container."
+    />
+    <title>Playable Kit Demo</title>
+    <link rel="stylesheet" href="./src/style.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <h1>phaser-playable-kit</h1>
+        <p class="tagline">
+          Playable ads for mobile games, built once with Phaser 4 and exported for each ad network.
+          Pick an ad and a network, then play it inside a simulated ad container.
+        </p>
+      </div>
+      <nav class="links">
+        <a href="https://github.com/AlvaroMillanEstevez/phaser-playable-kit">Source on GitHub</a>
+        <a
+          href="https://github.com/AlvaroMillanEstevez/phaser-playable-kit/blob/main/docs/networks.md"
+          >Network requirements</a
+        >
+      </nav>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls" aria-label="Controls">
+        <fieldset>
+          <legend>Playable</legend>
+          <div class="segmented" id="playables"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Network</legend>
+          <div class="chips" id="networks"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Orientation</legend>
+          <div class="segmented" id="orientation">
+            <button type="button" data-value="portrait" aria-pressed="true">Portrait</button>
+            <button type="button" data-value="landscape" aria-pressed="false">Landscape</button>
+          </div>
+        </fieldset>
+
+        <fieldset id="container-controls">
+          <legend>MRAID container</legend>
+          <label class="check">
+            <input type="checkbox" id="auto-start" checked />
+            <span>Send <code>ready</code> and <code>viewableChange</code> automatically</span>
+          </label>
+          <div class="row">
+            <button type="button" id="send-ready">Send ready</button>
+            <button type="button" id="toggle-viewable" aria-pressed="false">Viewable: off</button>
+          </div>
+          <p class="note" id="container-note"></p>
+        </fieldset>
+
+        <div class="build-info" id="build-info"></div>
+
+        <button type="button" class="primary" id="restart">Restart ad</button>
+      </section>
+
+      <section class="stage" aria-label="Ad preview">
+        <div class="phone-fit" id="phone-fit">
+          <div class="phone" id="phone">
+            <iframe id="ad" title="Playable ad preview" sandbox="allow-scripts"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel log" aria-label="Event log">
+        <div class="log-head">
+          <h2>Event log</h2>
+          <button type="button" id="clear-log">Clear</button>
+        </div>
+        <ol id="log" aria-live="polite"></ol>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>
+        Example ads made from
+        <a href="https://kokeskill.itch.io/nusa-warung-sort">Nusa: Warung Sort</a> and
+        <a href="https://github.com/AlvaroMillanEstevez/warung-game">Warung Kita</a>. v0.1.0, in
+        active development. MIT licence. The ads make no network requests and collect no data.
+      </p>
+    </footer>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>

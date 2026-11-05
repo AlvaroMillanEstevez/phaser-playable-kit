@@ -21,5 +21,5 @@
       "@network": ["./src/core/networks/preview.ts"]
     }
   },
-  "include": ["src", "playables", "scripts", "tests", "*.ts"]
+  "include": ["src", "playables", "scripts", "tests", "demo", "*.ts"]
 }

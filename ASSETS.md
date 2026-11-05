@@ -20,8 +20,16 @@ Depending on the jurisdiction, purely AI-generated images may not be protected b
 copyright. See the game's own
 [ASSETS.md](https://github.com/AlvaroMillanEstevez/nusa-sorting/blob/main/ASSETS.md).
 
+## Warung Kita playable (`playables/warung-kita/`)
+
+No image or audio files. The characters, the plate of nasi goreng and the palette are
+drawn in code, ported from the author's game
+[Warung Kita](https://github.com/AlvaroMillanEstevez/warung-game) (`src/visuals`, MIT).
+The room, counter and stove are drawn in the same style for this playable.
+
 ## Generated in code
 
 - Hello World playable: every shape is drawn with Phaser graphics.
+- Tutorial hand and buttons (`src/kit/`): drawn with Phaser graphics.
 - Sound effects in the playables are synthesized at runtime with the Web Audio API; there
   are no audio files.

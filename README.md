@@ -57,6 +57,8 @@ npm run build                # every playable for every network → dist/
 npm run size                 # fail if any build is over its network's limit
 npm run validate             # static checks: external URLs, fetch/XHR, iframes, CTA per network
 npm run test:e2e             # play every build in headless Chromium with a fake ad container
+npm run build:demo           # demo site (phone frame, network picker, MRAID simulator) → dist/site
+npm run preview:demo         # serve it at http://localhost:4174
 npm run check                # typecheck, lint, format check and tests
 ```
 
