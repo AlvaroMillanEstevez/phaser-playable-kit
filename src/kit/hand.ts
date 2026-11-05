@@ -85,6 +85,21 @@ export class TutorialHand {
     });
   }
 
+  /** Loops a tap on `at`: press, release, pause. */
+  showTap(at: Point, scale: number): void {
+    this.stop();
+    this.image.setPosition(at.x, at.y).setScale(scale).setAlpha(1).setVisible(true);
+    this.tween = this.scene.tweens.chain({
+      targets: this.image,
+      loop: -1,
+      tweens: [
+        { scale: scale * 0.82, duration: 220, ease: 'Sine.In' },
+        { scale, duration: 220, ease: 'Sine.Out' },
+        { scale, duration: 500 },
+      ],
+    });
+  }
+
   stop(): void {
     this.tween?.stop();
     this.tween = undefined;
