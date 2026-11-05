@@ -27,23 +27,22 @@ import { DIST_DIR, listPlayables, PLAYABLES_DIR } from '../../scripts/lib/paths.
 import type { SmokeDriver, Viewport } from './driver.ts';
 
 const VIEWPORT: Viewport = { width: 390, height: 844 };
-const READY_AT_MS = 300;
-const VIEWABLE_AT_MS = 700;
+const READY_AT_MS = 100;
+/** How long MRAID builds are left ready but not viewable before checking they render nothing. */
+const HIDDEN_CHECK_MS = 800;
 
 declare global {
   interface Window {
     __calls: string[];
+    __becomeViewable: () => void;
   }
 }
 
-/** A fake container exposing MRAID, ExitApi and FbPlayableAd that records every call. */
-function installFakeContainer({
-  readyAt,
-  viewableAt,
-}: {
-  readyAt: number;
-  viewableAt: number;
-}): void {
+/**
+ * A fake container exposing MRAID, ExitApi and FbPlayableAd that records every call.
+ * MRAID becomes ready by itself but only viewable when the test calls `__becomeViewable`.
+ */
+function installFakeContainer({ readyAt }: { readyAt: number }): void {
   window.__calls = [];
   const listeners: Record<string, ((...args: unknown[]) => void)[]> = {};
   let state = 'loading';
@@ -75,10 +74,10 @@ function installFakeContainer({
     state = 'default';
     emit('ready');
   }, readyAt);
-  setTimeout(() => {
+  window.__becomeViewable = () => {
     viewable = true;
     emit('viewableChange', true);
-  }, viewableAt);
+  };
 }
 
 function expectedCta(network: BuildNetworkId, config: PlayableConfig): string {
@@ -114,17 +113,17 @@ async function smoke(
     if (!(network === 'google' && url === GOOGLE_EXIT_API_URL)) external.push(url);
     return route.abort();
   });
-  await page.addInitScript(installFakeContainer, {
-    readyAt: READY_AT_MS,
-    viewableAt: VIEWABLE_AT_MS,
-  });
+  await page.addInitScript(installFakeContainer, { readyAt: READY_AT_MS });
   await page.goto(pathToFileURL(path.join(DIST_DIR, playable, network, 'index.html')).href);
 
   const usesMraid = NETWORKS[network].family === 'mraid';
   if (usesMraid) {
-    await page.waitForTimeout((READY_AT_MS + VIEWABLE_AT_MS) / 2);
+    await page.waitForTimeout(HIDDEN_CHECK_MS);
     if ((await page.locator('canvas').count()) > 0) problems.push('rendered before viewable');
   }
+  await page.evaluate(() => {
+    window.__becomeViewable();
+  });
   await page.waitForSelector('canvas', { timeout: 5000 });
   await page.waitForTimeout(800);
 
