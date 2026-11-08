@@ -13,7 +13,7 @@ First release. The project is new and in active development.
 - Runtime with a `NetworkAdapter` contract: starts only when the container is ready and the
   ad is viewable, pauses and mutes while hidden, unlocks audio on the first interaction and
   ignores the CTA before the first gameplay interaction.
-- Adapters for AppLovin, Unity Ads and Meta, plus Google and, in testing, Moloco and Liftoff.
+- Adapters for AppLovin, Unity Ads, Google and Meta, and for Moloco and Liftoff in testing.
 - Build pipeline producing a single HTML file or a ZIP per playable and network, bundling
   only that network's adapter.
 - Size budget, static validator and a Chromium smoke test for every build.

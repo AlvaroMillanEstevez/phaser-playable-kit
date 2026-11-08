@@ -208,7 +208,7 @@ preview tools yet**; that is the first item of the roadmap.
 ## Working with the author
 
 Alvaro Millan Estevez builds playable ads for studios and user acquisition agencies. Get in
-touch through his [GitHub profile](https://github.com/AlvaroMillanEstevez).
+touch through the [GitHub profile](https://github.com/AlvaroMillanEstevez).
 
 ## License
 
