@@ -205,10 +205,10 @@ example ads were also played from start to finish in the browser and reviewed th
 screenshots. **They have not been tested on physical phones or in the networks' own
 preview tools yet**; that is the first item of the roadmap.
 
-## Working with the author
+## Need a custom playable for your game?
 
-Alvaro Millan Estevez builds playable ads for studios and user acquisition agencies. Get in
-touch through the [GitHub profile](https://github.com/AlvaroMillanEstevez).
+I build them as a freelance service:
+[see how it works](https://alvaromillanestevez.github.io/playable-ads/).
 
 ## License
 
